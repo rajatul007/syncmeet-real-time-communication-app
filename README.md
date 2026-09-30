@@ -1,244 +1,378 @@
 # SyncMeet — Real-Time Video Conferencing & Collaboration Platform
 
-SyncMeet is a production-grade, full-stack real-time communication platform built to deliver ultra-low latency audio/video conferencing, interactive screen sharing, real-time messaging, secure file transfers, and a live synchronized collaborative whiteboard.
+SyncMeet is a full-stack real-time communication and collaboration platform for video meetings, screen sharing, messaging, collaborative whiteboarding, and secure file sharing.
 
----
+## Features
 
-## Table of Contents
+* **Video & Audio Conferencing** — Real-time peer-to-peer communication using WebRTC.
+* **Responsive Video Grid** — Supports multiple meeting participants with responsive layouts.
+* **Screen Sharing** — Share your screen using the browser's native `getDisplayMedia()` API.
+* **Collaborative Whiteboard** — Draw and collaborate in real time with multiple drawing tools.
+* **Real-Time Chat** — Send and receive meeting messages using Socket.IO.
+* **File Sharing** — Share documents, PDFs, and images during meetings.
+* **Participant Controls** — Microphone, camera, screen-sharing status, and host controls.
+* **Meeting History** — Track previous meetings and participation duration.
+* **Authentication** — Secure registration and login using JWT and bcrypt.
+* **Responsive Interface** — Designed for desktop and modern mobile browsers.
 
-1. [Project Overview](#project-overview)
-2. [Key Features](#key-features)
-3. [System Architecture](#system-architecture)
-4. [Technology Stack](#technology-stack)
-5. [WebRTC Architecture & Implementation](#webrtc-architecture--implementation)
-6. [Socket.IO Signaling & Real-Time Events](#socketio-signaling--real-time-events)
-7. [Database Schema & Persistence](#database-schema--persistence)
-8. [REST API Documentation](#rest-api-documentation)
-9. [Socket Event Specifications](#socket-event-specifications)
-10. [Security & Protection](#security--protection)
-11. [Installation & Setup](#installation--setup)
-12. [Environment Variables](#environment-variables)
-13. [Future Enhancements](#future-enhancements)
-14. [License](#license)
+## System Architecture
 
----
+```text
+                    +-----------------------------+
+                    |       SyncMeet Client       |
+                    |   React / HTML / CSS / JS   |
+                    +-------------+---------------+
+                                  |
+                    +-------------+---------------+
+                    |                             |
+                HTTP / REST                 Socket.IO
+                    |                             |
+                    v                             v
+          +-------------------+       +----------------------+
+          |   Express Server  |       |  Signaling Server    |
+          |                   |       |                      |
+          | JWT Authentication|       | Room Management      |
+          | Meeting APIs      |       | WebRTC Signaling     |
+          | File Uploads      |       | Chat & Events        |
+          +---------+---------+       | Whiteboard Sync      |
+                    |                 +----------+-----------+
+                    |                            |
+                    v                            |
+          +-------------------+                  |
+          | MongoDB / Mongoose|<-----------------+
+          |                   |
+          | Users             |
+          | Meetings          |
+          | Messages         |
+          | Files             |
+          | Meeting History  |
+          +-------------------+
 
-## 1. Project Overview
-
-SyncMeet demonstrates modern software engineering patterns across frontend, backend, peer-to-peer networking, and collaborative systems. It provides an intuitive, high-performance meeting environment suitable for engineering standups, remote pair programming, classroom discussions, and design reviews.
-
----
-
-## 2. Key Features
-
-- **Peer-to-Peer Video & Audio**: Full-mesh WebRTC topology delivering low latency without media proxy overhead.
-- **Dynamic Adaptive Video Grid**: Automatic responsive layouts supporting 1 to 6+ simultaneous participants with active speaker detection and camera-off avatar fallbacks.
-- **Hardware Display Screen Sharing**: Native `getDisplayMedia()` integration with seamless track replacement across all active peer connections.
-- **Collaborative Whiteboard**: Synchronized HTML5 Canvas with Pen, Eraser, Line, Rectangle, Circle, and Text tools, custom color palette, stroke sizing, undo/redo stacks, and PNG export.
-- **Real-Time Meeting Chat**: Live message delivery via Socket.IO with MongoDB persistence and system event notifications.
-- **Secure File Sharing**: In-meeting file distribution supporting documents, PDFs, and images up to 25MB with sanitized filenames and tokenized download streams.
-- **Participant Presence & Host Controls**: Real-time microphone/camera/screen state indicators with host capabilities to remove attendees or end the meeting for all participants.
-- **Meeting History & Duration Tracking**: Detailed logs of meetings joined and duration timestamps.
-- **Keyboard Shortcuts**: Quick hotkeys (`M` for mic, `V` for camera, `C` for chat, `W` for whiteboard, `P` for participants, `Esc` to close panels).
-
----
-
-## 3. System Architecture
-
-```
-                    +--------------------------------+
-                    |        SyncMeet Client         |
-                    |  (HTML5 / CSS3 / Vanilla JS)   |
-                    +---------------+----------------+
-                                    |
-            +-----------------------+-----------------------+
-            | HTTP / REST                                  | WebSockets / Socket.IO
-            v                                              v
-+-----------------------+                      +-----------------------+
-|  Express.js Server    |                      |  Socket.IO Signaling  |
-| - JWT Auth Middleware |                      | - Room Management     |
-| - Meeting Management  |                      | - SDP Offer / Answer  |
-| - File Upload Handler |                      | - ICE Candidate Relay |
-| - Message APIs        |                      | - Whiteboard Sync     |
-+-----------+-----------+                      +-----------+-----------+
-            |                                              |
-            v                                              |
-+-----------------------+                                  |
-|   Database Layer      |                                  |
-| - MongoDB / Mongoose  |<---------------------------------+
-| - Fallback Local Store| (Chat message persistence & history)
-+-----------------------+
-                                    |
-                                    | WebRTC Peer-to-Peer
-                                    v
-                    +--------------------------------+
-                    |  Peer A <=============> Peer B |
-                    |      (DTLS-SRTP Audio/Video)   |
-                    +--------------------------------+
+                         WebRTC
+                 Peer-to-Peer Audio/Video
 ```
 
----
-
-## 4. Technology Stack
+## Technology Stack
 
 ### Frontend
-- **HTML5**: Semantic markups, Canvas API, MediaDevices API (`getUserMedia`, `getDisplayMedia`).
-- **CSS3 & Tailwind CSS**: Dark-themed SaaS interface, custom scrollbars, responsive video grids, micro-animations.
-- **Vanilla JavaScript (ES Modules)**: Modular structure (`api.js`, `auth.js`, `webrtc.js`, `whiteboard.js`, `chat.js`, `files.js`, `meeting.js`, `dashboard.js`).
+
+* React
+* JavaScript
+* HTML5
+* CSS3
+* Tailwind CSS
+* WebRTC APIs
+* Canvas API
+* MediaDevices API
 
 ### Backend
-- **Node.js & Express.js**: RESTful service architecture with Helmet and CORS.
-- **Socket.IO**: Bi-directional signaling server and event pub/sub.
-- **Multer**: Secure multipart file upload engine with size and MIME restrictions.
-- **JWT & bcryptjs**: Cryptographic user password hashing and stateless token authorization.
+
+* Node.js
+* Express.js
+* Socket.IO
+* Multer
+* Helmet
+* CORS
+* JWT
+* bcryptjs
 
 ### Database
-- **MongoDB & Mongoose**: Object modeling for Users, Meetings, Messages, Files, and History.
-- **Embedded Persistence Fallback**: JSON-backed local storage engine ensuring zero downtime when remote MongoDB clusters are initializing.
 
----
+* MongoDB
+* Mongoose
 
-## 5. WebRTC Architecture & Implementation
+### Real-Time Communication
 
-1. **Topology**: Mesh networking where every participant establishes direct peer connections (`RTCPeerConnection`) with each other participant in the room.
-2. **STUN Configuration**: Google STUN servers (`stun:stun.l.google.com:19302`) resolve reflexive ICE candidates across NAT environments.
-3. **Signaling Flow**:
-   - `Participant A` joins and receives the list of connected sockets.
-   - `Participant A` creates an SDP offer: `pc.createOffer()`, sets local description, and transmits via Socket.IO to `Participant B`.
-   - `Participant B` sets remote description, generates an SDP answer (`pc.createAnswer()`), sets local description, and relays it back.
-   - Both peers exchange ICE candidates asynchronously (`pc.addIceCandidate()`).
-4. **Media Handling**:
-   - Tracks are attached dynamically via `pc.addTrack()`.
-   - Screen sharing uses `sender.replaceTrack(screenTrack)` to smoothly upgrade the video feed without renegotiating entire peer sessions.
+* WebRTC
+* Socket.IO
+* STUN
 
----
+## WebRTC Architecture
 
-## 6. Socket.IO Signaling & Real-Time Events
+SyncMeet uses WebRTC for peer-to-peer audio and video communication.
 
-- `join-meeting`: Registers socket in room `meeting_<meetingId>`, broadcasts `participant-joined`.
-- `offer` / `answer`: Routes session descriptions between specific socket IDs.
-- `ice-candidate`: Forwards ICE connectivity candidates to targeted peers.
-- `toggle-microphone` / `toggle-camera`: Synchronizes audio/video mute badges.
-- `screen-share-started` / `screen-share-stopped`: Broadcasts screen share status.
-- `chat-message`: Broadcasts and persists chat entries.
-- `whiteboard-draw` / `whiteboard-clear`: Transmits drawing operations to active peers.
-- `file-shared`: Notifies room participants of new downloadable assets.
-- `end-meeting` / `kick-participant`: Disconnects clients upon host command.
+The application uses:
 
----
+1. `RTCPeerConnection` for peer connections.
+2. STUN servers for ICE candidate discovery.
+3. Socket.IO for signaling.
+4. SDP offers and answers for connection negotiation.
+5. ICE candidates for network connectivity.
+6. `getUserMedia()` for camera and microphone access.
+7. `getDisplayMedia()` for screen sharing.
+8. `replaceTrack()` for switching between camera and screen-sharing video.
 
-## 7. Database Schema & Persistence
+Default STUN server:
 
-### Models:
-- **User**: `name`, `email`, `password` (hashed), `profileImage`, `role`, timestamps.
-- **Meeting**: `meetingId`, `title`, `description`, `host`, `participants[]`, `status`, `createdAt`, `endedAt`.
-- **Message**: `meeting`, `sender` (`userId`, `name`, `profileImage`), `message`, `isSystem`, `createdAt`.
-- **File**: `meeting`, `uploadedBy`, `originalName`, `storedName`, `mimeType`, `size`, `path`, `createdAt`.
-- **MeetingHistory**: `user`, `meeting` (`meetingId`, `title`, `hostName`), `joinedAt`, `leftAt`, `duration`.
+```text
+stun:stun.l.google.com:19302
+```
 
----
+## Socket.IO Events
 
-## 8. REST API Documentation
+The application uses Socket.IO for real-time communication.
 
-### Authentication (`/api/auth`)
-- `POST /register`: Create user account (`name`, `email`, `password`, `confirmPassword`).
-- `POST /login`: Authenticate credentials and receive JWT.
-- `GET /me`: Get current authenticated user profile.
-- `PUT /profile`: Update name, avatar, or password.
-- `POST /logout`: Sign out.
+Main events include:
 
-### Meetings (`/api/meetings`)
-- `POST /`: Create a new meeting (`title`, `description`).
-- `GET /`: Retrieve meetings hosted by current user.
-- `GET /:meetingId`: Validate and retrieve meeting metadata.
-- `POST /:meetingId/join`: Join meeting and log to history.
-- `POST /:meetingId/leave`: Leave meeting and update duration.
-- `POST /:meetingId/end`: Host-only meeting termination.
-- `GET /history/all`: Retrieve user's past meeting participation logs.
+* `join-meeting`
+* `participant-joined`
+* `offer`
+* `answer`
+* `ice-candidate`
+* `toggle-microphone`
+* `toggle-camera`
+* `screen-share-started`
+* `screen-share-stopped`
+* `chat-message`
+* `whiteboard-draw`
+* `whiteboard-clear`
+* `file-shared`
+* `end-meeting`
+* `kick-participant`
+
+## Database Models
+
+### User
+
+Stores:
+
+* Name
+* Email
+* Password hash
+* Profile image
+* Role
+* Timestamps
+
+### Meeting
+
+Stores:
+
+* Meeting ID
+* Title
+* Description
+* Host
+* Participants
+* Status
+* Creation time
+* End time
+
+### Message
+
+Stores:
+
+* Meeting
+* Sender
+* Message
+* System message status
+* Creation time
+
+### File
+
+Stores:
+
+* Meeting
+* Uploader
+* Original filename
+* Stored filename
+* MIME type
+* File size
+* File path
+* Creation time
+
+### Meeting History
+
+Stores:
+
+* User
+* Meeting
+* Meeting title
+* Host name
+* Join time
+* Leave time
+* Duration
+
+## REST API
+
+### Authentication
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+GET  /api/auth/me
+PUT  /api/auth/profile
+POST /api/auth/logout
+```
+
+### Meetings
+
+```text
+POST /api/meetings
+GET  /api/meetings
+GET  /api/meetings/:meetingId
+POST /api/meetings/:meetingId/join
+POST /api/meetings/:meetingId/leave
+POST /api/meetings/:meetingId/end
+GET  /api/meetings/history/all
+```
 
 ### Messages & Files
-- `GET /:meetingId/messages`: Retrieve chat log history.
-- `POST /:meetingId/files`: Upload meeting asset (multipart FormData).
-- `GET /:meetingId/files`: List assets shared in meeting.
-- `GET /api/files/:fileId/download`: Secure tokenized asset download stream.
-- `DELETE /api/files/:fileId`: Remove file (uploader or host only).
 
----
+```text
+GET    /api/meetings/:meetingId/messages
+POST   /api/meetings/:meetingId/files
+GET    /api/meetings/:meetingId/files
+GET    /api/files/:fileId/download
+DELETE /api/files/:fileId
+```
 
-## 9. Security & Protection
+## Security
 
-- **Transport Security**: WebRTC media encrypted via DTLS-SRTP.
-- **Header Protection**: Helmet configured with customized Content Security Policies (CSP) permitting WebSockets and Canvas operations.
-- **Authentication**: JWT tokens signed with SHA-256 HMAC.
-- **File Safety**: Restricted dangerous file extensions (`.exe`, `.sh`, `.bat`), 25MB ceiling, and filename sanitization.
-- **Authorization**: Host-only endpoints for meeting termination and attendee removal.
+SyncMeet includes several security measures:
 
----
+* JWT-based authentication
+* Password hashing using bcrypt
+* Helmet security headers
+* CORS configuration
+* Protected API routes
+* Host-only meeting controls
+* File type restrictions
+* File size restrictions
+* Filename sanitization
+* WebRTC DTLS-SRTP media encryption
 
-## 10. Installation & Setup
+> WebRTC provides encrypted media transport. Application-level end-to-end encryption beyond WebRTC's normal security model is not claimed by this project.
+
+## Installation
 
 ### Prerequisites
-- Node.js (v18+)
-- npm or yarn
 
-### 1. Clone repository
+* Node.js 18 or later
+* npm
+* MongoDB database
+
+### 1. Clone the repository
+
 ```bash
-git clone https://github.com/your-username/syncmeet.git
-cd syncmeet
+git clone https://github.com/rajatul007/syncmeet-real-time-communication-app.git
+cd syncmeet-real-time-communication-app
 ```
 
 ### 2. Install dependencies
+
 ```bash
 npm install
 ```
 
-### 3. Configure environment
-Create a `.env` file from `.env.example`:
-```bash
-cp .env.example .env
-```
-Fill in the configuration parameters:
+### 3. Configure environment variables
+
+Create a `.env` file in the project root.
+
 ```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/syncmeet
-JWT_SECRET=your_jwt_secret_key
+PORT=8080
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_strong_jwt_secret
+CLIENT_URL=http://localhost:8080
 STUN_SERVER_URL=stun:stun.l.google.com:19302
 ```
 
-### 4. Run application
-```bash
-# Start server in development mode
-npm run dev
+Do not commit the `.env` file to GitHub.
 
-# Or build and start for production
+### 4. Run in development
+
+```bash
+npm run dev
+```
+
+The application should be available at:
+
+```text
+http://localhost:8080
+```
+
+### 5. Build for production
+
+```bash
 npm run build
+```
+
+### 6. Start production server
+
+```bash
 npm start
 ```
-Open `http://localhost:3000` in your web browser.
 
----
+## Environment Variables
 
-## 11. Environment Variables
+| Variable          | Description                    | Required |
+| ----------------- | ------------------------------ | -------- |
+| `PORT`            | HTTP and WebSocket server port | Yes      |
+| `MONGODB_URI`     | MongoDB connection string      | Yes      |
+| `JWT_SECRET`      | Secret used to sign JWT tokens | Yes      |
+| `CLIENT_URL`      | Frontend application URL       | Yes      |
+| `STUN_SERVER_URL` | WebRTC STUN server URL         | Yes      |
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | HTTP & WebSocket server port | `3000` |
-| `MONGODB_URI` | MongoDB connection URI (optional) | Embedded fallback |
-| `JWT_SECRET` | Secret key for JWT generation | Embedded production key |
-| `CLIENT_URL` | Frontend origin URL | `http://localhost:3000` |
-| `STUN_SERVER_URL` | WebRTC STUN server URL | `stun:stun.l.google.com:19302` |
+### Example
 
----
+```env
+PORT=8080
+MONGODB_URI=mongodb://localhost:27017/syncmeet
+JWT_SECRET=replace_with_a_strong_random_secret
+CLIENT_URL=http://localhost:8080
+STUN_SERVER_URL=stun:stun.l.google.com:19302
+```
 
-## 12. Future Enhancements
+## Deployment
 
-- Selective Forwarding Unit (SFU) mode using mediasoup for 50+ participants.
-- End-to-End Encryption (E2EE) using WebRTC Insertable Streams.
-- Cloud recording to S3 / Google Cloud Storage.
-- Breakout rooms and live polling.
+Before deploying, make sure:
 
----
+* All production environment variables are configured.
+* `.env` is not committed to GitHub.
+* The server listens on `0.0.0.0`.
+* The application uses `process.env.PORT`.
+* Frontend API requests do not use hardcoded `localhost` URLs.
+* Socket.IO uses the deployed application URL.
+* WebRTC signaling works through the deployed server.
+* MongoDB is accessible from the deployment environment.
 
-## 13. License
+## Project Structure
 
-Distributed under the MIT License.
+```text
+syncmeet-real-time-communication-app/
+│
+├── backend/
+│   ├── config/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   └── ...
+│
+├── frontend/
+│   ├── components/
+│   ├── pages/
+│   ├── services/
+│   └── ...
+│
+├── server.ts
+├── package.json
+├── vite.config.ts
+├── metadata.json
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+> The exact directory structure may vary depending on the current implementation.
+
+## Future Enhancements
+
+* SFU-based architecture for larger meetings
+* Breakout rooms
+* Meeting recording
+* Cloud file storage
+* Advanced meeting moderation
+* Improved mobile experience
+* Additional collaboration tools
+
+## License
+
+This project is distributed under the MIT License.
