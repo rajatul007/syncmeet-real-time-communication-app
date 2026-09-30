@@ -1,0 +1,12 @@
+{
+  "name": "SyncMeet - Real-Time Collaboration & Video Platform",
+  "description": "A production-grade real-time video conferencing, screen sharing, collaborative whiteboarding, chat, and secure file sharing platform.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "display-capture"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

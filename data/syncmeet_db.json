@@ -1,0 +1,116 @@
+{
+  "users": [
+    {
+      "_id": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+      "name": "Alex Demo",
+      "email": "alex@example.com",
+      "password": "$2b$10$urTOeHaNJjjl6fEbz7YZneZzjQU5sTaimy9JiV5hjY7KJdFV7U0nm",
+      "profileImage": "https://api.dicebear.com/7.x/initials/svg?seed=Alex%20Demo&backgroundColor=2563eb&textColor=ffffff",
+      "role": "user",
+      "createdAt": "2026-09-30T13:46:11.159Z",
+      "updatedAt": "2026-09-30T13:46:11.159Z"
+    }
+  ],
+  "meetings": [
+    {
+      "_id": "a28ddfe2-db4d-45b9-af60-80eabdf83697",
+      "meetingId": "qob-fgcy-xas",
+      "title": "Engineering Standup",
+      "description": "Daily team sprint sync",
+      "host": {
+        "_id": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+        "name": "Alex Demo",
+        "email": "alex@example.com",
+        "profileImage": "https://api.dicebear.com/7.x/initials/svg?seed=Alex%20Demo&backgroundColor=2563eb&textColor=ffffff"
+      },
+      "participants": [
+        {
+          "userId": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+          "name": "Alex Demo",
+          "email": "alex@example.com",
+          "profileImage": "https://api.dicebear.com/7.x/initials/svg?seed=Alex%20Demo&backgroundColor=2563eb&textColor=ffffff",
+          "joinedAt": "2026-09-30T13:46:15.215Z"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2026-09-30T13:46:15.215Z"
+    },
+    {
+      "_id": "44f75d8a-de17-49db-afba-7560af3db5dc",
+      "meetingId": "pnh-dkzk-qyp",
+      "title": "Q3 Strategy Review",
+      "description": "Quarterly performance roadmap",
+      "host": {
+        "_id": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+        "name": "Alex Demo",
+        "email": "alex@example.com",
+        "profileImage": "https://api.dicebear.com/7.x/initials/svg?seed=Alex%20Demo&backgroundColor=2563eb&textColor=ffffff"
+      },
+      "participants": [
+        {
+          "userId": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+          "name": "Alex Demo",
+          "email": "alex@example.com",
+          "profileImage": "https://api.dicebear.com/7.x/initials/svg?seed=Alex%20Demo&backgroundColor=2563eb&textColor=ffffff",
+          "joinedAt": "2026-09-30T13:47:31.180Z"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2026-09-30T13:47:31.180Z"
+    },
+    {
+      "_id": "7e447356-b6b6-462c-9407-fdbaa32b04ca",
+      "meetingId": "jjh-mize-ovs",
+      "title": "Product Launch Sync",
+      "description": "Launch timeline and testing",
+      "host": {
+        "_id": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+        "name": "Alex Demo",
+        "email": "alex@example.com",
+        "profileImage": "https://api.dicebear.com/7.x/initials/svg?seed=Alex%20Demo&backgroundColor=2563eb&textColor=ffffff"
+      },
+      "participants": [
+        {
+          "userId": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+          "name": "Alex Demo",
+          "email": "alex@example.com",
+          "profileImage": "https://api.dicebear.com/7.x/initials/svg?seed=Alex%20Demo&backgroundColor=2563eb&textColor=ffffff",
+          "joinedAt": "2026-09-30T13:47:49.523Z"
+        }
+      ],
+      "status": "active",
+      "createdAt": "2026-09-30T13:47:49.523Z"
+    }
+  ],
+  "messages": [],
+  "files": [
+    {
+      "_id": "75593342-2e71-46b1-8cf8-14605ec3e887",
+      "meeting": "pnh-dkzk-qyp",
+      "uploadedBy": {
+        "userId": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+        "name": "Alex Demo"
+      },
+      "originalName": "agenda.txt",
+      "storedName": "45f2eb5a-a586-4a4a-b22e-6c16d05f1e62.txt",
+      "mimeType": "text/plain",
+      "size": 19,
+      "path": "/app/applet/uploads/45f2eb5a-a586-4a4a-b22e-6c16d05f1e62.txt",
+      "createdAt": "2026-09-30T13:47:31.216Z"
+    }
+  ],
+  "meetingHistories": [
+    {
+      "_id": "0d778775-35f4-40c8-b094-563e582a0c17",
+      "user": "4169d1ce-d2e1-4687-8af3-ab61ce2ff019",
+      "meeting": {
+        "meetingId": "jjh-mize-ovs",
+        "title": "Product Launch Sync",
+        "hostName": "Alex Demo"
+      },
+      "joinedAt": "2026-09-30T13:47:49.524Z",
+      "leftAt": "2026-09-30T13:47:51.551Z",
+      "duration": 2
+    }
+  ]
+}

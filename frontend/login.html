@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In - SyncMeet</title>
+  <meta name="description" content="Sign in to your SyncMeet account to create and join secure video meetings." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/auth.css" />
+</head>
+<body class="bg-slate-950 text-slate-100 flex flex-col min-h-screen">
+  <!-- Nav Bar Simple -->
+  <header class="h-20 border-b border-slate-800/80 px-6 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+      </div>
+      <span class="text-xl font-bold text-white tracking-tight">Sync<span class="text-blue-500">Meet</span></span>
+    </a>
+    <div class="text-sm text-slate-400">
+      Don't have an account? <a href="/register" class="text-blue-400 hover:text-blue-300 font-medium">Create one</a>
+    </div>
+  </header>
+
+  <main class="flex-1 flex items-center justify-center p-6">
+    <div class="auth-card">
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-white mb-2">Welcome back</h1>
+        <p class="text-sm text-slate-400">Enter your credentials to access your meetings</p>
+      </div>
+
+      <div id="errorAlert" class="hidden mb-6 p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-3">
+        <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <span id="errorAlertText">Invalid credentials</span>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input type="email" id="email" class="form-input" placeholder="you@company.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <div class="flex justify-between items-center mb-1">
+            <label class="form-label" for="password">Password</label>
+          </div>
+          <div class="password-input-wrapper">
+            <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password" />
+            <button type="button" id="togglePasswordBtn" class="password-toggle-btn" title="Toggle password visibility">
+              <svg id="eyeIcon" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full btn-primary py-3 text-base mt-2 shadow-lg shadow-blue-600/30">
+          <span>Sign In</span>
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module">
+    import { loginUser, redirectIfAuthenticated } from '/js/auth.js';
+    import { showToast } from '/js/api.js';
+
+    redirectIfAuthenticated();
+
+    const form = document.getElementById('loginForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errorAlert = document.getElementById('errorAlert');
+    const errorAlertText = document.getElementById('errorAlertText');
+    const passwordInput = document.getElementById('password');
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+
+    togglePasswordBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorAlert.classList.add('hidden');
+
+      const email = document.getElementById('email').value.trim();
+      const password = passwordInput.value;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Signing in...</span>';
+
+      try {
+        await loginUser(email, password);
+        showToast('Login successful! Redirecting...', 'success');
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect') || '/dashboard';
+        window.location.href = redirect;
+      } catch (err) {
+        errorAlertText.textContent = err.message || 'Failed to sign in. Please verify your email and password.';
+        errorAlert.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Sign In</span>';
+      }
+    });
+  </script>
+</body>
+</html>
